@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PakOil Central | Premium Engine Oils & Lubricants Store</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            orange: '#FF6B00',
+                            gold: '#FFA800',
+                            dark: '#0F172A',
+                            card: '#1E293B',
+                            accent: '#10B981'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap');
+        body { font-family: 'Outfit', sans-serif; }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col justify-between">
+
+    <!-- Header Navigation -->
+    <header class="sticky top-0 z-40 bg-slate-900/90 backdrop-blur-md border-b border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-4">
+            <!-- Brand Logo -->
+            <div class="flex items-center gap-3 cursor-pointer" onclick="switchTab('shop')">
+                <div class="w-11 h-11 rounded-xl bg-gradient-to-tr from-brand-orange to-brand-gold flex items-center justify-center text-slate-950 font-black text-2xl shadow-lg shadow-orange-500/20">
+                    <i class="fa-solid fa-oil-can"></i>
+                </div>
+                <div>
+                    <span class="text-xl font-bold bg-gradient-to-r from-white via-slate-200 to-slate-400 bg-clip-text text-transparent block leading-none">PakOil</span>
+                    <span class="text-xs font-semibold text-brand-gold tracking-widest uppercase">Central</span>
+                </div>
+            </div>
+
+            <!-- Search Bar -->
+            <div class="hidden md:flex flex-1 max-w-md relative">
+                <input type="text" id="searchInput" oninput="filterProducts()" placeholder="Search engine oil, brand, viscosity grade (e.g. 5W-30)..." class="w-full bg-slate-800/80 text-sm border border-slate-700/80 rounded-full pl-11 pr-4 py-2.5 text-slate-200 placeholder-slate-400 focus:outline-none focus:border-brand-orange transition">
+                <i class="fa-solid fa-magnifying-glass absolute left-4 top-3.5 text-slate-400 text-sm"></i>
+            </div>
+
+            <!-- Navigation Actions -->
+            <div class="flex items-center gap-3 sm:gap-4">
+                <button onclick="switchTab('shop')" id="shopNavBtn" class="text-sm font-semibold text-brand-orange px-3 py-2 rounded-lg hover:bg-slate-800 transition flex items-center gap-2">
+                    <i class="fa-solid fa-store"></i> <span class="hidden sm:inline">Store</span>
+                </button>
+                <button onclick="switchTab('admin')" id="adminNavBtn" class="text-sm font-semibold text-slate-400 hover:text-white px-3 py-2 rounded-lg hover:bg-slate-800 transition flex items-center gap-2">
+                    <i class="fa-solid fa-user-shield"></i> <span class="hidden sm:inline">Admin</span>
+                </button>
+                <button onclick="toggleCartDrawer(true)" class="relative bg-gradient-to-r from-brand-orange to-amber-600 text-white p-3 sm:px-4 sm:py-2.5 rounded-xl font-medium shadow-lg shadow-orange-500/10 flex items-center gap-2 hover:opacity-95 transition">
+                    <i class="fa-solid fa-cart-shopping"></i>
+                    <span class="hidden sm:inline text-sm">Cart</span>
+                    <span id="cartBadge" class="bg-slate-950 text-brand-gold text-xs font-bold px-2 py-0.5 rounded-full border border-brand-gold/30">0</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full flex-grow">
+        
+        <!-- SHOP VIEW -->
+        <div id="shopTab" class="space-y-8">
+            <!-- Hero Banner -->
+            <div class="relative rounded-3xl overflow-hidden bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 border border-slate-800 p-8 sm:p-12">
+                <div class="max-w-xl space-y-4 relative z-10">
+                    <span class="bg-brand-orange/20 text-brand-orange border border-brand-orange/30 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">100% Original Lubricants</span>
+                    <h1 class="text-3xl sm:text-5xl font-extrabold text-white leading-tight">Engine Protection & Peak Performance</h1>
+                    <p class="text-slate-400 text-sm sm:text-base">Shop high-grade synthetic engine oils, transmission fluids, and lubricants from Shell, Mobil 1, ZIC, Total & Castrol with fast nationwide delivery.</p>
+                    <div class="pt-2 flex flex-wrap gap-3">
+                        <a href="https://wa.me/923130456082" target="_blank" class="bg-emerald-600 hover:bg-emerald-500 text-white px-5 py-3 rounded-xl font-bold text-sm flex items-center gap-2 transition shadow-lg shadow-emerald-600/20">
+                            <i class="fa-brands fa-whatsapp text-lg"></i> Direct Order: 03130456082
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Filter Controls -->
+            <div class="flex flex-col sm:flex-row gap-4 items-center justify-between border-b border-slate-800 pb-6">
+                <!-- Category Tabs -->
+                <div class="flex items-center gap-2 overflow-x-auto w-full sm:w-auto pb-2 sm:pb-0 scrollbar-none">
+                    <button onclick="filterCategory('All')" class="cat-btn active bg-brand-orange text-slate-950 font-bold px-4 py-2 rounded-xl text-sm whitespace-nowrap transition">All Oils</button>
+                    <button onclick="filterCategory('Engine Oil')" class="cat-btn bg-slate-800 hover:bg-slate-700 text-slate-300 px-4 py-2 rounded-xl text-sm whitespace-nowrap transition">Engine Oils</button>
+                    <button onclick="filterCategory('Transmission Oil')" class="cat-btn bg-slate-800 hover:bg-slate-700 text-slate-300 px-4 py-2 rounded-xl text-sm whitespace-nowrap transition">Transmission</button>
+                    <button onclick="filterCategory('Brake Fluid')" class="cat-btn bg-slate-800 hover:bg-slate-700 text-slate-300 px-4 py-2 rounded-xl text-sm whitespace-nowrap transition">Brake Fluid</button>
+                    <button onclick="filterCategory('Coolants')" class="cat-btn bg-slate-800 hover:bg-slate-700 text-slate-300 px-4 py-2 rounded-xl text-sm whitespace-nowrap transition">Coolants</button>
+                </div>
+
+                <!-- Viscosity Filter -->
+                <div class="w-full sm:w-auto flex items-center gap-2">
+                    <label class="text-xs text-slate-400 uppercase font-semibold tracking-wider">Viscosity:</label>
+                    <select id="viscosityFilter" onchange="filterProducts()" class="bg-slate-800 text-sm text-slate-200 border border-slate-700 rounded-xl px-3 py-2 outline-none focus:border-brand-orange w-full sm:w-auto">
+                        <option value="All">All Grades</option>
+                        <option value="0W-20">0W-20</option>
+                        <option value="5W-30">5W-30</option>
+                        <option value="10W-40">10W-40</option>
+                        <option value="20W-50">20W-50</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Product Cards Grid -->
+            <div id="productGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                <!-- Dynamic Content via JS -->
+            </div>
+        </div>
+
+        <!-- ADMIN DASHBOARD VIEW -->
+        <div id="adminTab" class="hidden space-y-8">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-4">
+                <div>
+                    <h2 class="text-2xl font-bold text-white">Admin Management Portal</h2>
+                    <p class="text-slate-400 text-sm">Add/edit oil inventory products and view customer orders.</p>
+                </div>
+                <button onclick="openAddProductModal()" class="bg-brand-orange hover:bg-amber-500 text-slate-950 font-bold px-4 py-2 rounded-xl text-sm flex items-center gap-2">
+                    <i class="fa-solid fa-plus"></i> Add New Product
+                </button>
+            </div>
+
+            <!-- Admin Inventory Table -->
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden">
+                <div class="p-4 border-b border-slate-800">
+                    <h3 class="font-bold text-white">Current Products Inventory</h3>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm text-slate-300">
+                        <thead class="bg-slate-800 text-xs text-slate-400 uppercase">
+                            <tr>
+                                <th class="p-4">Product</th>
+                                <th class="p-4">Category</th>
+                                <th class="p-4">Viscosity</th>
+                                <th class="p-4">Price (4L)</th>
+                                <th class="p-4">Stock</th>
+                                <th class="p-4 text-right">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adminProductTable" class="divide-y divide-slate-800">
+                            <!-- Dynamic Content -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Slide-Out Cart Drawer -->
+    <div id="cartDrawer" class="fixed inset-0 z-50 overflow-hidden hidden">
+        <div class="absolute inset-0 bg-slate-950/80 backdrop-blur-sm" onclick="toggleCartDrawer(false)"></div>
+        <div class="fixed inset-y-0 right-0 max-w-full flex pl-10">
+            <div class="w-screen max-w-md bg-slate-900 border-l border-slate-800 p-6 flex flex-col justify-between shadow-2xl">
+                <div>
+                    <div class="flex items-center justify-between border-b border-slate-800 pb-4">
+                        <h2 class="text-lg font-bold text-white flex items-center gap-2">
+                            <i class="fa-solid fa-cart-shopping text-brand-orange"></i> Shopping Cart
+                        </h2>
+                        <button onclick="toggleCartDrawer(false)" class="text-slate-400 hover:text-white p-2">
+                            <i class="fa-solid fa-xmark text-xl"></i>
+                        </button>
+                    </div>
+                    <div id="cartItemsList" class="divide-y divide-slate-800 my-4 max-h-[60vh] overflow-y-auto">
+                        <!-- Dynamic Cart Items -->
+                    </div>
+                </div>
+
+                <!-- Cart Footer -->
+                <div class="border-t border-slate-800 pt-4 space-y-4">
+                    <div class="flex justify-between text-base font-bold text-white">
+                        <span>Total:</span>
+                        <span id="cartTotalText" class="text-brand-orange">Rs. 0</span>
+                    </div>
+                    <button onclick="openCheckoutModal()" class="w-full bg-brand-orange hover:bg-amber-500 text-slate-950 font-bold py-3.5 rounded-xl transition shadow-lg shadow-orange-500/20">
+                        Proceed to Checkout
+                    </button>
+                    <a id="cartWhatsappBtn" href="#" target="_blank" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3.5 rounded-xl flex items-center justify-center gap-2 transition">
+                        <i class="fa-brands fa-whatsapp text-lg"></i> Quick Order via WhatsApp
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 border-t border-slate-800 py-8 text-center text-sm text-slate-500">
+        <div class="max-w-7xl mx-auto px-4 space-y-2">
+            <p>&copy; 2026 PakOil Central. All rights reserved.</p>
+            <p>Official WhatsApp Helpline: <a href="https://wa.me/923130456082" class="text-brand-gold font-bold">03130456082</a></p>
+        </div>
+    </footer>
+
+    <!-- App JavaScript Engine -->
+    <script>
+        // Default Store Products Data
+        let products = [
+            { id: 1, name: "Shell Helix Ultra 5W-30", category: "Engine Oil", viscosity: "5W-30", brand: "Shell", price: 8200, stock: 25, rating: 4.9, desc: "Fully synthetic motor oil designed for ultimate engine performance and protection." },
+            { id: 2, name: "Mobil 1 Advanced Synthetic 0W-20", category: "Engine Oil", viscosity: "0W-20", brand: "Mobil 1", price: 9500, stock: 18, rating: 5.0, desc: "Advanced full synthetic formula keeps your engine running like new." },
+            { id: 3, name: "ZIC X9 5W-40 Fully Synthetic", category: "Engine Oil", viscosity: "10W-40", brand: "ZIC", price: 7400, stock: 30, rating: 4.8, desc: "Provides exceptional anti-wear protection and fuel efficiency." },
+            { id: 4, name: "Castrol GTX 20W-50 Motor Oil", category: "Engine Oil", viscosity: "20W-50", brand: "Castrol", price: 5800, stock: 40, rating: 4.6, desc: "Superior sludge protection for high-mileage engines." },
+            { id: 5, name: "Total Quartz 9000 5W-30", category: "Engine Oil", viscosity: "5W-30", brand: "Total", price: 7900, stock: 22, rating: 4.7, desc: "Synthetic technology motor oil for modern petrol and diesel engines." },
+            { id: 6, name: "Aisin Automatic Transmission Fluid", category: "Transmission Oil", viscosity: "All", brand: "Aisin", price: 6500, stock: 15, rating: 4.9, desc: "Premium ATF for smooth shifting and transmission longevity." }
+        ];
+
+        let cart = [];
+        let currentCategory = 'All';
+        const storeWhatsApp = "923130456082";
+
+        // Render Product Catalog
+        function renderProducts(itemsToRender = products) {
+            const grid = document.getElementById('productGrid');
+            grid.innerHTML = '';
+
+            if(itemsToRender.length === 0) {
+                grid.innerHTML = `<div class="col-span-full text-center py-12 text-slate-500">No products found matching your search.</div>`;
+                return;
+            }
+
+            itemsToRender.forEach(p => {
+                const waText = encodeURIComponent(`Hi PakOil Central, I want to order: ${p.name} (Rs. ${p.price.toLocaleString()})`);
+                grid.innerHTML += `
+                    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 hover:border-slate-700 transition flex flex-col justify-between group">
+                        <div>
+                            <div class="flex items-center justify-between mb-3">
+                                <span class="bg-slate-800 text-brand-gold text-xs font-bold px-2.5 py-1 rounded-lg border border-slate-700">${p.viscosity}</span>
+                                <span class="text-xs text-slate-400 font-semibold"><i class="fa-solid fa-star text-amber-400"></i> ${p.rating}</span>
+                            </div>
+                            <h3 class="font-bold text-lg text-white group-hover:text-brand-orange transition">${p.name}</h3>
+                            <p class="text-xs text-slate-400 mt-2 line-clamp-2">${p.desc}</p>
+                        </div>
+                        <div class="mt-6 pt-4 border-t border-slate-800/80 space-y-3">
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs text-slate-400">Price (4L):</span>
+                                <span class="text-xl font-extrabold text-white">Rs. ${p.price.toLocaleString()}</span>
+                            </div>
+                            <div class="grid grid-cols-2 gap-2">
+                                <button onclick="addToCart(${p.id})" class="bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold py-2.5 rounded-xl transition flex items-center justify-center gap-1.5">
+                                    <i class="fa-solid fa-cart-plus"></i> Add to Cart
+                                </button>
+                                <a href="https://wa.me/${storeWhatsApp}?text=${waText}" target="_blank" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold py-2.5 rounded-xl transition flex items-center justify-center gap-1.5">
+                                    <i class="fa-brands fa-whatsapp"></i> WhatsApp
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        // Cart Actions
+        function addToCart(productId) {
+            const product = products.find(p => p.id === productId);
+            const existing = cart.find(c => c.id === productId);
+
+            if (existing) {
+                existing.qty += 1;
+            } else {
+                cart.push({ ...product, qty: 1 });
+            }
+            updateCartUI();
+            toggleCartDrawer(true);
+        }
+
+        function updateCartUI() {
+            const list = document.getElementById('cartItemsList');
+            const badge = document.getElementById('cartBadge');
+            const totalText = document.getElementById('cartTotalText');
+            const cartWaBtn = document.getElementById('cartWhatsappBtn');
+
+            list.innerHTML = '';
+            let total = 0;
+            let totalItems = 0;
+            let cartSummary = "Order Details:%0A";
+
+            cart.forEach(item => {
+                total += item.price * item.qty;
+                totalItems += item.qty;
+                cartSummary += `- ${item.name} (${item.qty}x) = Rs. ${(item.price * item.qty).toLocaleString()}%0A`;
+
+                list.innerHTML += `
+                    <div class="py-3 flex items-center justify-between">
+                        <div>
+                            <h4 class="font-bold text-sm text-white">${item.name}</h4>
+                            <p class="text-xs text-slate-400">Rs. ${item.price.toLocaleString()} x ${item.qty}</p>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="font-bold text-sm text-brand-orange">Rs. ${(item.price * item.qty).toLocaleString()}</span>
+                            <button onclick="removeFromCart(${item.id})" class="text-slate-500 hover:text-red-400 p-1">
+                                <i class="fa-solid fa-trash text-xs"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+
+            badge.innerText = totalItems;
+            totalText.innerText = `Rs. ${total.toLocaleString()}`;
+            
+            cartSummary += `%0ATotal: Rs. ${total.toLocaleString()}`;
+            cartWaBtn.href = `https://wa.me/${storeWhatsApp}?text=${cartSummary}`;
+        }
+
+        function removeFromCart(id) {
+            cart = cart.filter(c => c.id !== id);
+            updateCartUI();
+        }
+
+        function toggleCartDrawer(open) {
+            const drawer = document.getElementById('cartDrawer');
+            if (open) drawer.classList.remove('hidden');
+            else drawer.classList.add('hidden');
+        }
+
+        // Navigation Switcher
+        function switchTab(tab) {
+            if (tab === 'shop') {
+                document.getElementById('shopTab').classList.remove('hidden');
+                document.getElementById('adminTab').classList.add('hidden');
+                document.getElementById('shopNavBtn').classList.add('text-brand-orange');
+                document.getElementById('adminNavBtn').classList.remove('text-brand-orange');
+            } else {
+                document.getElementById('shopTab').classList.add('hidden');
+                document.getElementById('adminTab').classList.remove('hidden');
+                document.getElementById('adminNavBtn').classList.add('text-brand-orange');
+                document.getElementById('shopNavBtn').classList.remove('text-brand-orange');
+                renderAdminTable();
+            }
+        }
+
+        // Search & Filters
+        function filterProducts() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            const viscosity = document.getElementById('viscosityFilter').value;
+
+            const filtered = products.filter(p => {
+                const matchesCat = currentCategory === 'All' || p.category === currentCategory;
+                const matchesVisc = viscosity === 'All' || p.viscosity === viscosity;
+                const matchesSearch = p.name.toLowerCase().includes(query) || p.brand.toLowerCase().includes(query);
+                return matchesCat && matchesVisc && matchesSearch;
+            });
+
+            renderProducts(filtered);
+        }
+
+        function filterCategory(cat) {
+            currentCategory = cat;
+            document.querySelectorAll('.cat-btn').forEach(btn => {
+                btn.classList.remove('bg-brand-orange', 'text-slate-950', 'font-bold');
+                btn.classList.add('bg-slate-800', 'text-slate-300');
+            });
+            event.target.classList.add('bg-brand-orange', 'text-slate-950', 'font-bold');
+            filterProducts();
+        }
+
+        // Admin Table
+        function renderAdminTable() {
+            const table = document.getElementById('adminProductTable');
+            table.innerHTML = '';
+            products.forEach(p => {
+                table.innerHTML += `
+                    <tr>
+                        <td class="p-4 font-bold text-white">${p.name}</td>
+                        <td class="p-4">${p.category}</td>
+                        <td class="p-4">${p.viscosity}</td>
+                        <td class="p-4 font-bold text-brand-gold">Rs. ${p.price.toLocaleString()}</td>
+                        <td class="p-4">${p.stock} units</td>
+                        <td class="p-4 text-right space-x-2">
+                            <button onclick="deleteProduct(${p.id})" class="text-red-400 hover:text-red-300 font-medium">Delete</button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        function deleteProduct(id) {
+            products = products.filter(p => p.id !== id);
+            renderAdminTable();
+            renderProducts();
+        }
+
+        // Initialize Store
+        renderProducts();
+    </script>
+</body>
+</html>
